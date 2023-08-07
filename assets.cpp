@@ -5,6 +5,7 @@
 
 namespace global {
 Position MAX_POSITION(0,0);
+unsigned int velocity = 3;
 } // namespace settings
 
 void cursesInit() {

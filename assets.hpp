@@ -23,6 +23,7 @@ public:
 
 namespace global {
 extern Position MAX_POSITION;
+extern unsigned int velocity;
 } // namespace settings
 
 class Fruit {

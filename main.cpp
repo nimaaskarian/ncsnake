@@ -58,6 +58,6 @@ bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit)
     }
 
     snake.moveToCurrentDirection();
-    delay_output(1000 / 10);
+    delay_output(1000 / (10 * global::velocity));
   return false;
 }
