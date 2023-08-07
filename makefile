@@ -1,8 +1,8 @@
-snake-game.o: main.cpp assets.cpp assets.hpp
-	g++ main.cpp assets.cpp -lncurses -o snake-game.o
+ncsnake.o: main.cpp assets.cpp assets.hpp
+	g++ main.cpp assets.cpp -lncurses -o ncsnake.o
 clean:
-	rm snake-game.o
+	rm ncsnake.o
 
-install: snake-game.o
-	cp -f snake-game.o /bin/snake-game
-	chmod 755 /bin/snake-game
+install: ncsnake.o
+	cp -f ncsnake.o /bin/ncsnake
+	chmod 755 /bin/ncsnake
