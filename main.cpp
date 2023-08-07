@@ -1,15 +1,29 @@
 #include "assets.hpp"
 
+bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit);
 int main(int argc, char *argv[]) {
   srand((unsigned)time(NULL));
 
-  Snake snake(settings::SNAKECHAR);
-  Fruit fruit;
+  Snake snake('O');
+  Fruit fruit('#');
+  bool isSnakeDead = 0;
 
   cursesInit();
 
-  while (!settings::GAMEOVER) {
-    getmaxyx(stdscr, settings::maxy, settings::maxx);
+  while (!isSnakeDead) {
+    isSnakeDead = playSnakeAndFruitAndReturnIsOver(snake, fruit);
+  }
+  popGameOver();
+  nodelay(stdscr, false);
+  getch();
+  nocbreak();
+  endwin();
+  return 0;
+}
+
+bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit)
+{
+    getmaxyx(stdscr, global::MAX_POSITION.y, global::MAX_POSITION.x);
     erase();
 
     fruit.drawFruit();
@@ -17,14 +31,12 @@ int main(int argc, char *argv[]) {
 
     snake.growIfFruitEaten(fruit);
 
-    if (snake.collision()) {
-      settings::GAMEOVER = 1;
+    snake.moveToOtherSideOnEdgeCollision();
+    if (snake.selfCollision()) {
+      return true;
     }
 
-    // ->
-    settings::inputChar = getch();
-
-    switch (settings::inputChar) {
+    switch (getch()) {
     case 'h':
     case KEY_LEFT:
       snake.turn(Direction::left);
@@ -42,17 +54,10 @@ int main(int argc, char *argv[]) {
       snake.turn(Direction::up);
       break;
     case 'q':
-      settings::GAMEOVER = 1;
-      break;
+      return true;
     }
 
     snake.moveToCurrentDirection();
     delay_output(1000 / 10);
-  }
-  popGameOver();
-  nodelay(stdscr, FALSE);
-  getch();
-  nocbreak();
-  endwin();
-  return 0;
+  return false;
 }

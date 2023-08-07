@@ -7,13 +7,6 @@
 
 enum Direction {up = 1, right, down ,left};
 
-namespace settings {
-extern char SNAKECHAR;
-extern char FRUITCHAR;
-extern int maxy, maxx;
-extern bool GAMEOVER;
-extern int inputChar;
-} // namespace settings
 
 void cursesInit();
 void popGameOver();
@@ -28,6 +21,10 @@ public:
   int x;
 };
 
+namespace global {
+extern Position MAX_POSITION;
+} // namespace settings
+
 class Fruit {
 private:
   Position postion;
@@ -35,8 +32,7 @@ private:
   friend class Snake;
 
 public:
-  Fruit();
-  Fruit(Position);
+  Fruit(char);
   void drawFruit();
   void setRandomPosition();
 };
@@ -48,10 +44,11 @@ public:
   Snake(char );
   auto head();
   Position nextPosition();
+  void moveToOtherSideOnEdgeCollision();
   void initSnake();
   void drawSnake();
   void turn(Direction);
   void moveToCurrentDirection();
-  bool collision();
+  bool selfCollision();
   void growIfFruitEaten(Fruit &);
 };
