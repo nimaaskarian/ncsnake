@@ -1,4 +1,4 @@
-#include <curses.h>
+#include <ncurses.h>
 #include <utility>
 
 #include "game.hpp"
@@ -110,15 +110,9 @@ void Snake::moveToCurrentDirection()
 
 bool Snake::selfCollision() 
 {
-  int index = 0;
-  for (auto position : bodyPositions) {
-    int subindex = 0;
-    for (auto subPosition : bodyPositions) {
-      if (subindex != index && position == subPosition)
-        return true;
-      subindex++;
-    }
-    index++;
+  for (auto it = head()+1; it < bodyPositions.end(); it++) {
+    if (*it == *head())
+      return true;
   }
   return false;
 }
