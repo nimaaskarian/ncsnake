@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_HPP
+#define GAME_HPP
 
 #include <cstdlib>
 #include <ctime>
@@ -6,10 +7,6 @@
 #include <vector>
 
 enum Direction {up = 1, right, down ,left};
-
-
-void cursesInit();
-void popGameOver();
 
 class Position {
 public:
@@ -19,12 +16,6 @@ public:
   int y;
   int x;
 };
-
-namespace global {
-extern Position MAX_POSITION;
-extern unsigned int velocity;
-extern unsigned int score;
-} // namespace settings
 
 class Fruit {
 private:
@@ -37,6 +28,7 @@ public:
   void drawFruit();
   void setRandomPosition();
 };
+
 class Snake {
 public:
   char bodyCharacter;
@@ -54,3 +46,10 @@ public:
   bool selfCollision();
   bool hasReachedFruit(Fruit &);
 };
+
+namespace game {
+extern Position maxPosition;
+extern unsigned int velocity;
+extern unsigned int score;
+}
+#endif

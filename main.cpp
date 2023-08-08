@@ -1,14 +1,9 @@
 #include "game.hpp"
 
-namespace global {
-Position MAX_POSITION(0,0);
-unsigned int velocity = 2;
-unsigned int score = 0;
-} // namespace settings
-
 unsigned int numberLength(int n, int base=10);
 bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit);
 void cursesInit();
+void popGameOver();
 
 int main(int argc, char *argv[]) {
   srand((unsigned)time(NULL));
@@ -33,7 +28,7 @@ int main(int argc, char *argv[]) {
 
 bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit)
 {
-    getmaxyx(stdscr, global::MAX_POSITION.y, global::MAX_POSITION.x);
+    getmaxyx(stdscr, game::maxPosition.y, game::maxPosition.x);
     erase();
 
     fruit.drawFruit();
@@ -42,7 +37,7 @@ bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit)
     if (snake.hasReachedFruit(fruit)) {
       snake.addToHead();
       fruit.setRandomPosition();
-      global::score++;
+      game::score++;
     }
 
     snake.moveToOtherSideOnEdgeCollision();
@@ -76,11 +71,12 @@ bool playSnakeAndFruitAndReturnIsOver(Snake &snake, Fruit &fruit)
     }
 
     snake.moveToCurrentDirection();
-    delay_output(1000 / (10 * global::velocity));
+    delay_output(1000 / (10 * game::velocity));
   return false;
 }
 
-void cursesInit() {
+void cursesInit() 
+{
   initscr();
   cbreak();
   curs_set(0);
@@ -89,13 +85,14 @@ void cursesInit() {
   keypad(stdscr, true);
 }
 
-void popGameOver() {
+void popGameOver() 
+{
   erase();
-  Position gameOverPosition(global::MAX_POSITION.y/2, global::MAX_POSITION.x/2);
+  Position gameOverPosition(game::maxPosition.y/2, game::maxPosition.x/2);
 
   mvprintw(gameOverPosition.y, gameOverPosition.x - 4, "GAME OVER");
-  mvprintw(gameOverPosition.y+2,gameOverPosition.x - 3 - numberLength(global::score)/2,
-           "Score: %d", global::score);
+  mvprintw(gameOverPosition.y+2,gameOverPosition.x - 3 - numberLength(game::score)/2,
+           "Score: %d", game::score);
 
   mvprintw(gameOverPosition.y+1,gameOverPosition.x - 12,
            "Press any key to exit ...");

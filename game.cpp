@@ -5,6 +5,12 @@
 
 #define SNAKE_INITIAL_BODY 4
 
+namespace game {
+  Position maxPosition(0,0);
+  unsigned int velocity = 2;
+  unsigned int score = 0;
+} 
+
 Position::Position(int y, int x) 
 {
   this->y = y;
@@ -14,8 +20,8 @@ Position::Position(int y, int x)
 Position Position::random()
 {
   Position p;
-  p.y = (rand() % (global::MAX_POSITION.y - 10) + 5);
-  p.x = (rand() % (global::MAX_POSITION.x - 20) + 10);
+  p.y = (rand() % (game::maxPosition.y - 10) + 5);
+  p.x = (rand() % (game::maxPosition.x - 20) + 10);
 
   return p;
 }
@@ -120,19 +126,19 @@ bool Snake::selfCollision()
 void Snake::moveToOtherSideOnEdgeCollision()
 {
   if (head()->x < 0) {
-    head()->x = global::MAX_POSITION.x;
+    head()->x = game::maxPosition.x;
     return;
   }
-  if (head()->x >= global::MAX_POSITION.x) {
+  if (head()->x >= game::maxPosition.x) {
     head()->x = 0;
     return;
   }
 
   if (head()->y < 0) {
-    head()->y = global::MAX_POSITION.y;
+    head()->y = game::maxPosition.y;
     return;
   }
-  if (head()->y >= global::MAX_POSITION.y) {
+  if (head()->y >= game::maxPosition.y) {
     head()->y = 0;
     return;
   }
