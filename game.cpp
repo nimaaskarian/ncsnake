@@ -1,33 +1,23 @@
-#include "assets.hpp"
 #include <curses.h>
 #include <utility>
-#include <fstream>
 
-namespace global {
-Position MAX_POSITION(0,0);
-unsigned int velocity = 3;
-} // namespace settings
+#include "game.hpp"
 
-void cursesInit() {
-  initscr();
-  cbreak();
-  curs_set(0);
-  noecho();
-  nodelay(stdscr, true);
-  keypad(stdscr, true);
+#define SNAKE_INITIAL_BODY 4
+
+Position::Position(int y, int x) 
+{
+  this->y = y;
+  this->x = x;
 }
 
-void popGameOver() {
-  erase();
-  mvprintw(global::MAX_POSITION.y / 2, ((global::MAX_POSITION.x / 2) - 9), "GAME OVER");
-  mvprintw(global::MAX_POSITION.y / 2 + 1, ((global::MAX_POSITION.x / 2) - 17),
-           "Press any key to exit ...");
-  refresh();
-}
+Position Position::random()
+{
+  Position p;
+  p.y = (rand() % (global::MAX_POSITION.y - 10) + 5);
+  p.x = (rand() % (global::MAX_POSITION.x - 20) + 10);
 
-Position::Position() {
-  this->y = (rand() % (global::MAX_POSITION.y - 10) + 5);
-  this->x = (rand() % (global::MAX_POSITION.y - 20) + 10);
+  return p;
 }
 
 bool Position::operator==(Position &obj) 
@@ -35,29 +25,29 @@ bool Position::operator==(Position &obj)
   return obj.x == this->x && obj.y == this->y;
 }
 
-Position::Position(int y, int x) {
-  this->y = y;
-  this->x = x;
+Fruit::Fruit(char character)
+{
+  this->character = character;
+  this->position = Position::random();
 }
 
-Fruit::Fruit(char character) : character(character), postion() {
+void Fruit::drawFruit() 
+{
+  mvprintw(this->position.y, this->position.x, "%c", this->character);
 }
 
-void Fruit::drawFruit() {
-  mvprintw(this->postion.y, this->postion.x, "%c", this->character);
+void Fruit::setRandomPosition() 
+{
+  this->position = Position::random();
 }
 
-void Fruit::setRandomPosition() {
-    this->postion.y = (rand() % (global::MAX_POSITION.y - 10) + 5);
-    this->postion.x = (rand() % (global::MAX_POSITION.x - 20) + 10);
-}
-
-auto Snake::head() 
+std::vector<Position>::iterator Snake::head() 
 {
   return bodyPositions.begin();
 }
 
-void Snake::drawSnake() {
+void Snake::drawSnake() 
+{
   for (auto &t : bodyPositions) {
     mvprintw(t.y, t.x, "%c", bodyCharacter);
   }
@@ -73,13 +63,17 @@ void Snake::turn(Direction direction)
     currentDirection = direction;
 }
 
-void Snake::growIfFruitEaten(Fruit &fruit)
+void Snake::addToHead()
 {
-  if (*head() == fruit.postion) {
-    fruit.setRandomPosition();
-    bodyPositions.insert(head(),nextPosition());
-  }
+  bodyPositions.insert(head(),nextPosition());
+}
 
+bool Snake::hasReachedFruit(Fruit &fruit)
+{
+  if (*head() == fruit.position) 
+    return true;
+  
+  return false;
 }
 
 Position Snake::nextPosition()
@@ -102,15 +96,14 @@ Position Snake::nextPosition()
   return nextPosition;
 }
 
-void Snake::moveToCurrentDirection() {
-
-  bodyPositions.insert(head(), nextPosition());
+void Snake::moveToCurrentDirection() 
+{
+  addToHead();
   bodyPositions.pop_back();
 }
 
-bool Snake::selfCollision() {
-
-  // snake collision
+bool Snake::selfCollision() 
+{
   int index = 0;
   for (auto position : bodyPositions) {
     int subindex = 0;
@@ -145,9 +138,10 @@ void Snake::moveToOtherSideOnEdgeCollision()
   }
 }
 
-Snake::Snake(char bodyCharacter) {
+Snake::Snake(char bodyCharacter) 
+{
   this->currentDirection = right;
   this->bodyCharacter = bodyCharacter;
-  for (int i{4}; i >= 0; i--)
+  for (int i{SNAKE_INITIAL_BODY}; i >= 0; i--)
     bodyPositions.push_back(Position(0, i));
 }

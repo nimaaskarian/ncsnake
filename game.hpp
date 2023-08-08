@@ -13,10 +13,9 @@ void popGameOver();
 
 class Position {
 public:
-  Position();
-  Position(int, int);
+  Position(int=0, int=0);
   bool operator ==(Position &);
-  void randomPos();
+  static Position random();
   int y;
   int x;
 };
@@ -24,11 +23,12 @@ public:
 namespace global {
 extern Position MAX_POSITION;
 extern unsigned int velocity;
+extern unsigned int score;
 } // namespace settings
 
 class Fruit {
 private:
-  Position postion;
+  Position position;
   char character;
   friend class Snake;
 
@@ -43,13 +43,14 @@ public:
   std::vector<Position> bodyPositions;
   Direction currentDirection;
   Snake(char );
-  auto head();
+  std::vector<Position>::iterator head();
   Position nextPosition();
+  void addToHead();
   void moveToOtherSideOnEdgeCollision();
   void initSnake();
   void drawSnake();
   void turn(Direction);
   void moveToCurrentDirection();
   bool selfCollision();
-  void growIfFruitEaten(Fruit &);
+  bool hasReachedFruit(Fruit &);
 };
